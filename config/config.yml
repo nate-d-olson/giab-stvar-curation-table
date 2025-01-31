@@ -1,0 +1,13 @@
+reference: path/to/global/reference.fasta
+chain_file: url_or_path_to_global_chain_file
+callsets:
+  - id: callset1
+    truvari_fp_vcf: path/to/callset1/fp.vcf
+    truvari_fn_vcf: path/to/callset1/fn.vcf
+    random_seed: 42
+  - id: callset2
+    truvari_fp_vcf: path/to/callset2/fp.vcf
+    truvari_fn_vcf: path/to/callset2/fn.vcf
+    random_seed: 24
+parameters:
+  num_variants: 100

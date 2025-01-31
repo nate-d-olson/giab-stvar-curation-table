@@ -1,4 +1,134 @@
-# Main entrypoint of the workflow. 
-# Please follow the best practices: 
-# https://snakemake.readthedocs.io/en/stable/snakefiles/best_practices.html,
-# in particular regarding the standardized folder structure mentioned there. 
+configfile: "config.yaml"
+
+import os
+
+rule all:
+    input:
+        expand("results/{callset}/combined_variants.tsv", callset=[cs['id'] for cs in config["callsets"]])
+
+rule truvari_ga4gh:
+    input:
+        fp=lambda wildcards: next(cs['truvari_fp_vcf'] for cs in config["callsets"] if cs["id"] == wildcards.callset),
+        fn=lambda wildcards: next(cs['truvari_fn_vcf'] for cs in config["callsets"] if cs["id"] == wildcards.callset)
+    output:
+        fp_vcf="results/{callset}/consolidated_fp.vcf",
+        fn_vcf="results/{callset}/consolidated_fn.vcf"
+    conda:
+        "envs/truvari.yaml"
+    log:
+        "logs/{callset}/truvari_ga4gh.log"
+    shell:
+        """
+        truvari ga4gh -o {wildcards.callset} {input.fp} {input.fn} \
+                      --output-dir results/{wildcards.callset} &> {log}
+        """
+
+rule truvari_anno:
+    input:
+        vcf="results/{callset}/{type}_vcf"
+    output:
+        anno_vcf="results/{callset}/anno_{type}.vcf"
+    conda:
+        "envs/truvari.yaml"
+    log:
+        "logs/{callset}/truvari_anno_{type}.log"
+    params:
+        svinfo_params="",  # Add specific parameters for svinfo
+        trf_params=""  # Add specific parameters for trf
+    shell:
+        """
+        truvari anno svinfo {params.svinfo_params} {input.vcf} | \
+        truvari anno trf {params.trf_params} -o {output.anno_vcf} &> {log}
+        """
+
+rule bcftools_query:
+    input:
+        vcf="results/{callset}/anno_{type}.vcf"
+    output:
+        tsv="results/{callset}/{type}_variants.tsv"
+    conda:
+        "envs/bcftools.yaml"
+    log:
+        "logs/{callset}/bcftools_query_{type}.log"
+    shell:
+        """
+        bcftools query -f '%CHROM\t%POS\t%ID\t%REF\t%ALT\t%SVTYPE\t%SVLEN\n' {input.vcf} > {output.tsv} &> {log}
+        """
+
+rule r_subsample_variants:
+    input:
+        fp_tsv="results/{callset}/fp_variants.tsv",
+        fn_tsv="results/{callset}/fn_variants.tsv"
+    output:
+        subsampled_tsv="results/{callset}/subsampled_variants.tsv",
+        bed="results/{callset}/variants.bed"
+    conda:
+        "envs/r-tidyverse.yaml"
+    log:
+        "logs/{callset}/r_subsample_variants.log"
+    params:
+        num_variants=config["parameters"]["num_variants"],
+        seed=lambda wildcards: next(cs['random_seed'] for cs in config["callsets"] if cs["id"] == wildcards.callset)
+    script:
+        "scripts/subsample_variants.R"
+
+rule download_chain_file:
+    output:
+        chain=config["chain_file"]
+    log:
+        "logs/download_chain_file.log"
+    shell:
+        """
+        wget {output.chain} &> {log}
+        """
+
+rule liftover_maternal:
+    input:
+        bed="results/{callset}/variants.bed",
+        chain=config["chain_file"]
+    output:
+        lifted_bed="results/{callset}/lifted_variants_maternal.bed",
+        unmapped="results/{callset}/unmapped_maternal.bed"
+    conda:
+        "envs/liftover.yaml"
+    log:
+        "logs/{callset}/liftover_maternal.log"
+    shell:
+        """
+        liftOver {input.bed} {input.chain} {output.lifted_bed} {output.unmapped} &> {log}
+        """
+
+rule liftover_paternal:
+    input:
+        bed="results/{callset}/variants.bed",
+        chain=config["chain_file"]
+    output:
+        lifted_bed="results/{callset}/lifted_variants_paternal.bed",
+        unmapped="results/{callset}/unmapped_paternal.bed"
+    conda:
+        "envs/liftover.yaml"
+    log:
+        "logs/{callset}/liftover_paternal.log"
+    shell:
+        """
+        liftOver {input.bed} {input.chain} {output.lifted_bed} {output.unmapped} &> {log}
+        """
+
+rule combine_results:
+    input:
+        subsampled_tsv="results/{callset}/subsampled_variants.tsv",
+        lifted_maternal="results/{callset}/lifted_variants_maternal.bed",
+        lifted_paternal="results/{callset}/lifted_variants_paternal.bed"
+    output:
+        combined="results/{callset}/combined_variants.tsv"
+    log:
+        "logs/{callset}/combine_results.log"
+    shell:
+        """
+        paste {input.subsampled_tsv} > temp_combined.tsv
+        echo -e '\\nMaternal Assembly:' >> temp_combined.tsv
+        cat {input.lifted_maternal} >> temp_combined.tsv
+        echo -e '\\nPaternal Assembly:' >> temp_combined.tsv
+        cat {input.lifted_paternal} >> temp_combined.tsv
+        mv temp_combined.tsv {output.combined} &> {log}
+        """
