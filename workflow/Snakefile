@@ -8,19 +8,49 @@ rule all:
 
 rule truvari_ga4gh:
     input:
-        fp=lambda wildcards: next(cs['truvari_fp_vcf'] for cs in config["callsets"] if cs["id"] == wildcards.callset),
-        fn=lambda wildcards: next(cs['truvari_fn_vcf'] for cs in config["callsets"] if cs["id"] == wildcards.callset)
+        lambda wildcards: next(cs['bench_dir'] for cs in config["callsets"] if cs["id"] == wildcards.callset)
     output:
-        fp_vcf="results/{callset}/consolidated_fp.vcf",
-        fn_vcf="results/{callset}/consolidated_fn.vcf"
+        query_vcf="results/ga4gh/{callset}/query.vcf.gz",
+        truth_vcf="results/ga4gh/{callset}/truth.vcf.gz"
     conda:
-        "envs/truvari.yaml"
+        "envs/truvari.yml"
     log:
         "logs/{callset}/truvari_ga4gh.log"
     shell:
         """
-        truvari ga4gh -o {wildcards.callset} {input.fp} {input.fn} \
-                      --output-dir results/{wildcards.callset} &> {log}
+        truvari ga4gh \
+            --with-refine -B 0 \
+            -i {input} \
+            -o results/ga4gh/{wildcards.callset} \
+            &> {log}
+        """
+
+rule get_FPandFN_vcf:
+    input:
+        query_vcf="results/ga4gh/{callset}/query.vcf.gz",
+        truth_vcf="results/ga4gh/{callset}/truth.vcf.gz"
+    output:
+        fn_vcf="results/ga4gh/{callset}/fn.vcf.gz",
+        fp_vcf="results/ga4gh/{callset}/fp.vcf.gz"
+    conda:
+        "envs/bcftools.yml"
+    log:
+        "logs/{callset}/get_FPandFN.log"
+    shell:
+        """
+        echo "Extracting FNs" > {log}
+        bcftools view -Oz \
+            -o {fn_vcf} \
+            --include 'FMT/BD=="FN"' \
+            {input.truth_vcf} \
+            &> {log}
+        
+        echo "Extracting FPs" >> {log}
+        bcftools view -Oz \
+            -o {fp_vcf} \
+            --include 'FMT/BD=="FP"' \
+            {input.query_vcf} \
+            &>> {log}
         """
 
 rule truvari_anno:
