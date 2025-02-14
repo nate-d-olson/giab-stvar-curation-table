@@ -1,164 +1,272 @@
-configfile: "config.yaml"
+configfile: "config/config.yml"
+
 
 import os
 
+
 rule all:
     input:
-        expand("results/{callset}/combined_variants.tsv", callset=[cs['id'] for cs in config["callsets"]])
+        expand(
+            "results/evaluation_tables/{callset}/report.html",
+            callset=config["callsets"].keys(),
+        ),
 
-rule truvari_ga4gh:
+
+rule get_ref:
     input:
-        lambda wildcards: next(cs['bench_dir'] for cs in config["callsets"] if cs["id"] == wildcards.callset)
+        storage.http(config["ref"]["url"]),
     output:
-        query_vcf="results/ga4gh/{callset}/query.vcf.gz",
-        truth_vcf="results/ga4gh/{callset}/truth.vcf.gz"
+        "resources/GRCh38.fa",
+    shell:
+        """
+        cp {input} {output}
+    """
+
+
+rule truvari_bench:
+    input:
+        base_vcf=storage.s3(config["base"]["vcf"]),
+        base_vcfidx=storage.s3(config["base"]["vcfidx"]),
+        comp_vcf=lambda wildcards: storage.s3(
+            config["callsets"][wildcards.callset]["vcf"]
+        ),
+        comp_vcfidx=lambda wildcards: storage.s3(
+            config["callsets"][wildcards.callset]["vcfidx"]
+        ),
+        regions=storage.s3(config["base"]["bed"]),
+        ref="resources/GRCh38.fa",
+    output:
+        base_vcf="results/truvari_bench/{callset}/refine.base.vcf.gz",
+        comp_vcf="results/truvari_bench/{callset}/refine.comp.vcf.gz",
+    threads: 4
     conda:
         "envs/truvari.yml"
     log:
-        "logs/{callset}/truvari_ga4gh.log"
+        "logs/truvari_bench/{callset}.log",
     shell:
         """
-        truvari ga4gh \
-            --with-refine -B 0 \
-            -i {input} \
-            -o results/ga4gh/{wildcards.callset} \
+        rm -rf results/truvari_bench/{wildcards.callset}/tmp/
+        truvari bench \
+            --refine --dup-to-ins --pick ac --passonly \
+            --base {input.base_vcf} \
+            --comp {input.comp_vcf} \
+            --output results/truvari_bench/{wildcards.callset}/tmp \
+            --reference {input.ref} \
             &> {log}
+        mv results/truvari_bench/{wildcards.callset}/tmp/* \
+            results/truvari_bench/{wildcards.callset}/
+        rm -r results/truvari_bench/{wildcards.callset}/tmp
         """
 
-rule get_FPandFN_vcf:
+
+## Additional arguments for truvari
+
+
+
+## check truvari bench --refine output, no longer need ga4gh step
+rule get_discrepancies:
     input:
-        query_vcf="results/ga4gh/{callset}/query.vcf.gz",
-        truth_vcf="results/ga4gh/{callset}/truth.vcf.gz"
+        base_vcf="results/truvari_bench/{callset}/refine.base.vcf.gz",
+        comp_vcf="results/truvari_bench/{callset}/refine.comp.vcf.gz",
     output:
-        fn_vcf="results/ga4gh/{callset}/fn.vcf.gz",
-        fp_vcf="results/ga4gh/{callset}/fp.vcf.gz"
+        fn_vcf="results/discrepancies/{callset}/fn.vcf.gz",
+        fp_vcf="results/discrepancies/{callset}/fp.vcf.gz",
     conda:
         "envs/bcftools.yml"
     log:
-        "logs/{callset}/get_FPandFN.log"
+        "logs/discrepancies/{callset}.log",
     shell:
         """
         echo "Extracting FNs" > {log}
         bcftools view -Oz \
-            -o {fn_vcf} \
+            -o {output.fn_vcf} \
             --include 'FMT/BD=="FN"' \
-            {input.truth_vcf} \
-            &> {log}
+            {input.base_vcf} \
+            &>> {log}
         
         echo "Extracting FPs" >> {log}
         bcftools view -Oz \
-            -o {fp_vcf} \
+            -o {output.fp_vcf} \
             --include 'FMT/BD=="FP"' \
-            {input.query_vcf} \
+            {input.comp_vcf} \
             &>> {log}
         """
 
-rule truvari_anno:
+
+rule truvari_anno_svinfo:
     input:
-        vcf="results/{callset}/{type}_vcf"
+        "results/discrepancies/{callset}/{type}.vcf.gz",
     output:
-        anno_vcf="results/{callset}/anno_{type}.vcf"
+        "results/truvari_anno/{callset}/{type}_svinfo.vcf",
     conda:
-        "envs/truvari.yaml"
+        "envs/truvari.yml"
     log:
-        "logs/{callset}/truvari_anno_{type}.log"
+        "logs/{callset}/truvari_anno_svinfo_{type}.log",
+    threads: 1
+    shell:
+        """
+        truvari anno svinfo -o {output} {input} &> {log}
+        """
+
+
+rule compress_index_vcf:
+    input:
+        "results/truvari_anno/{prefix}.vcf",
+    output:
+        "results/truvari_anno/{prefix}.vcf.gz",
+        "results/truvari_anno/{prefix}.vcf.gz.csi",
+    log:
+        "logs/compress_index_vcf/{prefix}.log",
     params:
-        svinfo_params="",  # Add specific parameters for svinfo
-        trf_params=""  # Add specific parameters for trf
+        extra="-W",
+    wrapper:
+        "v5.7.0/bio/bcftools/view"
+
+
+rule get_trfdb:
+    input:
+        storage.http(config["adotto"]["url"]),
+    output:
+        trfdb="resources/references/GRCh38_adotto_trf.bed.gz",
+        trfdbtbi="resources/references/GRCh38_adotto_trf.bed.gz.tbi",
+    log:
+        "logs/make_db_for_truvari_anno_trf.log",
+    conda:
+        "envs/bcftools.yml"
     shell:
         """
-        truvari anno svinfo {params.svinfo_params} {input.vcf} | \
-        truvari anno trf {params.trf_params} -o {output.anno_vcf} &> {log}
-        """
+        echo "Getting number of columns in {input}" >{log}
+        last_col=$(awk -v FS='\\t' 'NR==1 {{print NF; exit}}' <(gzip -dc {input}))
+        echo "Number of columns $last_col" >> {log}
+        zcat {input} \
+            | cut -f1-3,${{last_col}} \
+            | bgzip 1> {output.trfdb} 2>>{log}
+        tabix {output.trfdb} 2>>{log}
+    """
 
-rule bcftools_query:
+
+rule extract_ref_chroms:
     input:
-        vcf="results/{callset}/anno_{type}.vcf"
+        "{prefix}.fa",
+        fai="{prefix}.fa.fai",
     output:
-        tsv="results/{callset}/{type}_variants.tsv"
-    conda:
-        "envs/bcftools.yaml"
+        "{prefix}_main.fa",
     log:
-        "logs/{callset}/bcftools_query_{type}.log"
+        "logs/extract_ref_chroms/{prefix}.log",
+    params:
+        region=[f"chr{x}" for x in list(range(1, 23)) + ["X", "Y"]],
+    wrapper:
+        "v5.7.0/bio/samtools/faidx"
+
+
+rule index_fasta:
+    input:
+        "{prefix}.fa",
+    output:
+        "{prefix}.fa.fai",
+    log:
+        "logs/index_ref/{prefix}.log",
+    wrapper:
+        "v5.7.0/bio/samtools/faidx"
+
+
+rule truvari_anno_trf:
+    input:
+        vcf="results/truvari_anno/{callset}/{type}_svinfo.vcf.gz",
+        ref="resources/GRCh38_main.fa",
+        refidx="resources/GRCh38_main.fa.fai",
+        trfdb="resources/references/GRCh38_adotto_trf.bed.gz",
+        trfdbtbi="resources/references/GRCh38_adotto_trf.bed.gz.tbi",
+    output:
+        "results/truvari_anno/{callset}/{type}_svinfo-trf.vcf",
+    conda:
+        "envs/truvari.yml"
+    log:
+        "logs/{callset}/truvari_anno_trf_{type}.log",
+    threads: 4
     shell:
         """
-        bcftools query -f '%CHROM\t%POS\t%ID\t%REF\t%ALT\t%SVTYPE\t%SVLEN\n' {input.vcf} > {output.tsv} &> {log}
+        truvari anno trf \
+            -i {input.vcf} \
+            -o {output} \
+            -f {input.ref} \
+            -r {input.trfdb} \
+            -t {threads} \
+            -e trf \
+            &> {log}
         """
 
-rule r_subsample_variants:
+
+rule make_variant_tsvs:
     input:
-        fp_tsv="results/{callset}/fp_variants.tsv",
-        fn_tsv="results/{callset}/fn_variants.tsv"
+        vcf="results/truvari_anno/{callset}/{type}_svinfo-trf.vcf",
     output:
-        subsampled_tsv="results/{callset}/subsampled_variants.tsv",
-        bed="results/{callset}/variants.bed"
+        tsv="results/variant_tsvs/{callset}/{type}.tsv",
     conda:
-        "envs/r-tidyverse.yaml"
+        "envs/bcftools.yml"
     log:
-        "logs/{callset}/r_subsample_variants.log"
+        "logs/variant_tsvs/{callset}_{type}.log",
+    shell:
+        """
+        bcftools query -HH \
+            -f '%CHROM\t%POS0\t%END\t%SVTYPE\t%SVLEN\t%TRF\t%TRFdiff\t%TRFrepeat\t%TRFovl\t%TRFstart\t%TRFend\t%TRFperiod\t%TRFcopies\t%TRFscore\t%TRFentropy\t%INFO\n' \
+            {input.vcf} 1> {output.tsv} 2> {log}
+        """
+
+
+rule get_coords:
+    input:
+        "results/variant_tsvs/{callset}/{type}.tsv",
+    output:
+        "results/coords/{callset}/{type}_coords.bed",
+    conda:
+        "envs/r-tidyverse.yml"
+    log:
+        "logs/{callset}/get_coords_{type}.log",
     params:
         num_variants=config["parameters"]["num_variants"],
-        seed=lambda wildcards: next(cs['random_seed'] for cs in config["callsets"] if cs["id"] == wildcards.callset)
+        seed=lambda wildcards: config["callsets"][wildcards.callset]["random_seed"],
     script:
-        "scripts/subsample_variants.R"
+        "scripts/get_coords.R"
 
-rule download_chain_file:
-    output:
-        chain=config["chain_file"]
-    log:
-        "logs/download_chain_file.log"
-    shell:
-        """
-        wget {output.chain} &> {log}
-        """
 
-rule liftover_maternal:
+rule liftover:
     input:
-        bed="results/{callset}/variants.bed",
-        chain=config["chain_file"]
+        bed="results/coords/{callset}/{type}_coords.bed",
+        chain=lambda wildcards: storage.http(config["chain"][wildcards.hap]["url"]),
     output:
-        lifted_bed="results/{callset}/lifted_variants_maternal.bed",
-        unmapped="results/{callset}/unmapped_maternal.bed"
+        lifted="results/liftover/{callset}/{type}_{hap}_lifted.bed",
+        unlifted="results/liftover/{callset}/{type}_{hap}_unlifted.txt",
     conda:
-        "envs/liftover.yaml"
+        "envs/liftover.yml"
     log:
-        "logs/{callset}/liftover_maternal.log"
+        "logs/liftover/{callset}/{type}_{hap}.log",
     shell:
         """
-        liftOver {input.bed} {input.chain} {output.lifted_bed} {output.unmapped} &> {log}
+        liftOver {input.bed} {input.chain} {output.lifted} {output.unlifted} &> {log}
         """
 
-rule liftover_paternal:
-    input:
-        bed="results/{callset}/variants.bed",
-        chain=config["chain_file"]
-    output:
-        lifted_bed="results/{callset}/lifted_variants_paternal.bed",
-        unmapped="results/{callset}/unmapped_paternal.bed"
-    conda:
-        "envs/liftover.yaml"
-    log:
-        "logs/{callset}/liftover_paternal.log"
-    shell:
-        """
-        liftOver {input.bed} {input.chain} {output.lifted_bed} {output.unmapped} &> {log}
-        """
-
+## TODO - fix R inputs, not sure about lists
 rule combine_results:
     input:
-        subsampled_tsv="results/{callset}/subsampled_variants.tsv",
-        lifted_maternal="results/{callset}/lifted_variants_maternal.bed",
-        lifted_paternal="results/{callset}/lifted_variants_paternal.bed"
+        variant_tsv=expand(
+            "results/variant_tsvs/{{callset}}/{type}.tsv", type=["fn", "fp"]
+        ),
+        ref_coords=expand("results/{{callset}}/{type}_coords.bed", type=["fn", "fp"]),
+        lifted_coords=expand(
+            "results/liftover/{{callset}}/{type}_{hap}_lifted.bed",
+            type=["fn", "fp"],
+            hap=["mat", "pat"],
+        ),
     output:
-        combined="results/{callset}/combined_variants.tsv"
+        "results/evaluation_tables/{callset}/report.html",
+    params:
+        full="results/evaluation_tables/{callset}/full_variant_tbl.tsv",
+        sampled="results/evaluation_tables/{callset}/sampled_variant_tbl.tsv",
+        rdata="results/evaluation_tables/{callset}/eval_tbl.RData",
     log:
-        "logs/{callset}/combine_results.log"
-    shell:
-        """
-        paste {input.subsampled_tsv} > temp_combined.tsv
-        echo -e '\\nMaternal Assembly:' >> temp_combined.tsv
-        cat {input.lifted_maternal} >> temp_combined.tsv
-        echo -e '\\nPaternal Assembly:' >> temp_combined.tsv
-        cat {input.lifted_paternal} >> temp_combined.tsv
-        mv temp_combined.tsv {output.combined} &> {log}
-        """
+        "logs/{callset}/combine_results.log",
+    conda:
+        "envs/r-tidyverse.yml"
+    script:
+        "scripts/make_variant_table.Rmd"

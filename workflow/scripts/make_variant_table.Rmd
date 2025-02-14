@@ -1,0 +1,195 @@
+---
+title: "HG002 Q100 T2T draft benchmark external evaluation variant table"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+  highlight: tango
+  number_sections: no
+  theme: default
+  toc: yes
+  toc_depth: 3
+  toc_float:
+    collapsed: no
+    smooth_scroll: yes
+---
+
+__TODO__
+- sanity checks
+- summary / logging
+
+## Loading libraries and defining inputs
+
+```{r}
+library(tidyverse)
+fn_tsv_path <- snakemake@input$variant_tsv[1]
+fp_tsv_path <- snakemake@input$variant_tsv[2]
+fn_ref_path <- snakemake@input$ref_coords[1]
+fp_ref_path <- snakemake@input$ref_coords[2]
+fn_mat_path <- snakemake@input$lifted_coords[1]
+fn_pat_path <- snakemake@input$lifted_coords[2]
+fp_mat_path <- snakemake@input$lifted_coords[3]
+fp_pat_path <- snakemake@input$lifted_coords[4]
+out_full_path <- snakemake@params$full
+out_sampled_path <- snakemake@params$sampled
+```
+
+
+```{r}
+make_coords_tbl <- function(anno_tsv, ref_coords, mat_coords, pat_coords){
+    label <- if_else(stringr::str_detect(anno_tsv, "fn"), "fn","fp")
+    ## TODO add check to make sure all fp or fn
+    var_tbl <- read_tsv(anno_tsv) |> 
+        rename(
+            CHROM = `#CHROM`,
+            INFO = `(null)`
+        ) |> 
+            rowwise() |> 
+            mutate(INFO_md5 = digest::digest(INFO,algo = "md5"))
+
+    grch38 <- read_tsv(ref_coords, col_names = c("GRCh38_chr", "GRCh38_start","GRCh38_end", "INFO_md5"))
+    mat <- read_tsv(mat_coords, col_names = c("mat_chr", "mat_start","mat_end", "INFO_md5"))
+    pat <- read_tsv(pat_coords, col_names = c("pat_chr", "pat_start","pat_end", "INFO_md5"))
+
+    coords_tbl <- full_join(var_tbl, grch38) |> 
+        full_join(mat) |> 
+        full_join(pat) |> 
+        mutate(label = label, SVLEN = as.integer(SVLEN))
+
+    return(coords_tbl)
+}
+```
+
+## Load and combined tables
+
+```{r message = FALSE, warning = FALSE}
+fn_coords_tbl <- make_coords_tbl(fn_tsv_path, fn_ref_path, fn_mat_path, fn_pat_path)
+fp_coords_tbl <- make_coords_tbl(fp_tsv_path, fp_ref_path, fp_mat_path, fp_pat_path)
+## Combining FP and FN tables 
+combined_tbl <- bind_rows(fn_coords_tbl, fp_coords_tbl) |> 
+        mutate(TR_anno = if_else(TRF == "1", "TR","nonTR")) |> 
+        mutate(sv_type = case_when(SVTYPE == "DUP" ~ "INS",
+        SVTYPE %in% c("INS","DEL") ~ SVTYPE,
+        TRUE ~ "OTHER"))
+```
+
+```{r}
+combined_tbl |> write_tsv(out_full_path)
+```
+
+
+## Random sampling
+
+```{r}
+sampled_tbl <- combined_tbl |> 
+    group_by(label, TR_anno, sv_type) |> 
+    slice_sample(n = 5)
+```
+
+```{r}
+sampled_tbl |> 
+    select(label, TR_anno, sv_type, CHROM, POS0, END, SVLEN, TRFdiff, TRFrepeat, TRFovl, TRFstart, TRFend, TRFperiod, TRFcopies, TRFscore, TRFentropy, INFO, GRCh38_chr, GRCh38_start, GRCh38_end, mat_chr, mat_start, mat_end, pat_chr, pat_start, pat_end) |> 
+    write_tsv(out_sampled_path)
+```
+
+## Discrepancy Summary
+
+Number of variants per strata
+```{r message = FALSE, warning = FALSE}
+full_counts <- combined_tbl |> 
+    group_by(label, TR_anno, sv_type) |> 
+    count(name = "total")
+
+sampled_counts <- sampled_tbl |> 
+    group_by(label, TR_anno, sv_type) |> 
+    count(name = "sampled")
+
+full_join(full_counts, sampled_counts)
+```
+
+SV Size distributions
+```{r message = FALSE, warning = FALSE}
+combined_tbl |> 
+    filter(SVLEN != ".", SVTYPE %in% c("INS","DEL")) |> 
+    mutate(SVLEN = as.integer(SVLEN),
+    TRF = if_else(TRF == 1, "TandemRepeat","nonTR")) |> 
+    ggplot() + 
+    geom_vline(aes(xintercept = 300), linetype = 2) + 
+    geom_vline(aes(xintercept = 5000), linetype = 2) +
+    geom_histogram(aes(x = SVLEN, fill = label), bins = 100) + 
+    facet_grid(SVTYPE~TRF) + 
+    scale_x_log10() + 
+    theme_bw()
+```
+
+```{r}
+sampled_tbl |> 
+    filter(SVLEN != ".", SVTYPE %in% c("INS","DEL")) |> 
+    mutate(SVLEN = as.integer(SVLEN),
+    TRF = if_else(TRF == 1, "TandemRepeat","nonTR")) |> 
+    ggplot() + 
+    geom_vline(aes(xintercept = 300), linetype = 2) + 
+    geom_vline(aes(xintercept = 5000), linetype = 2) +
+    geom_histogram(aes(x = SVLEN, fill = label), bins = 100) + 
+    facet_grid(SVTYPE~TRF) + 
+    scale_x_log10() + 
+    theme_bw()
+```
+
+Size distribution of intervals for IGV
+```{r message = FALSE, warning = FALSE}
+combined_tbl |> 
+    filter(SVLEN != ".", SVTYPE %in% c("INS","DEL")) |> 
+    mutate(SVLEN = as.integer(SVLEN),
+    TRF = if_else(TRF == 1, "TandemRepeat","nonTR"),
+    igv_interval = GRCh38_end - GRCh38_start) |> 
+    ggplot() + 
+    geom_histogram(aes(x = igv_interval, fill = label), bins = 100) + 
+    facet_grid(SVTYPE~TRF) + 
+    scale_x_log10() + 
+    theme_bw() + 
+    annotation_logticks(sides = "b")
+```
+
+Sampled variants
+```{r message = FALSE, warning = FALSE}
+sampled_tbl |> 
+    filter(SVLEN != ".", SVTYPE %in% c("INS","DEL")) |> 
+    mutate(SVLEN = as.integer(SVLEN),
+    TRF = if_else(TRF == 1, "TandemRepeat","nonTR"),
+    igv_interval = GRCh38_end - GRCh38_start) |> 
+    ggplot() + 
+    geom_histogram(aes(x = igv_interval, fill = label), bins = 100) + 
+    facet_grid(SVTYPE~TRF) + 
+    scale_x_log10() + 
+    theme_bw() + 
+    annotation_logticks(sides = "b")
+```
+
+Relationship between SV size and IGV region (interval)
+```{r message = FALSE, warning = FALSE}
+combined_tbl |> 
+    filter(SVLEN != ".", SVTYPE %in% c("INS","DEL")) |> 
+    mutate(SVLEN = as.integer(SVLEN),
+    TRF = if_else(TRF == 1, "TandemRepeat","nonTR"),
+    igv_interval = GRCh38_end - GRCh38_start) |> 
+    ggplot() + 
+    geom_point(aes(x = SVLEN, y = igv_interval, fill = label),shape = 21) + 
+    facet_grid(SVTYPE~TRF) + 
+    scale_x_log10() + 
+    scale_y_log10() + 
+    theme_bw() + 
+    annotation_logticks(sides = "bl")
+```
+
+## Reproducibility
+TODO - add GIAB template code 
+
+Snakemake parameters used to generate report
+```{r}
+snakemake
+```
+
+Saving parameters for debugging
+```{r}
+save.image(snakemake@params$rdata)
+```
