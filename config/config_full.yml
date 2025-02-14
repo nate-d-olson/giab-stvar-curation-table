@@ -20,6 +20,18 @@ callsets:
     vcf: s3://giab-data/external_evaluations/20241113_v0.019_HG002Q100v1.1/evaluations/stvar/callsets/comenius-svdss2/svdss2.vcf.gz
     vcfidx: s3://giab-data/external_evaluations/20241113_v0.019_HG002Q100v1.1/evaluations/stvar/callsets/comenius-svdss2/svdss2.vcf.gz.tbi
     random_seed: 421
+  illumina-dragen:
+    vcf: s3://giab-data/external_evaluations/20241113_v0.019_HG002Q100v1.1/evaluations/stvar/callsets/illumina-dragen/DRAGEN_4.4.x_NIST_HG002.sv.vcf.gz
+    vcfidx: s3://giab-data/external_evaluations/20241113_v0.019_HG002Q100v1.1/evaluations/stvar/callsets/illumina-dragen/DRAGEN_4.4.x_NIST_HG002.sv.vcf.gz.tbi
+    random_seed: 214
+  iter-dragen:
+    vcf: s3://giab-data/external_evaluations/20241113_v0.019_HG002Q100v1.1/evaluations/stvar/callsets/iter-dragen/HG002.hg38.sv.vcf.gz
+    vcfidx: s3://giab-data/external_evaluations/20241113_v0.019_HG002Q100v1.1/evaluations/stvar/callsets/iter-dragen/HG002.hg38.sv.vcf.gz.tbi
+    random_seed: 124
+  pacbio-sawfish:
+    vcf: s3://giab-data/external_evaluations/20241113_v0.019_HG002Q100v1.1/evaluations/stvar/callsets/pacbio-sawfish/genotyped.sv.vcf.gz
+    vcfidx: s3://giab-data/external_evaluations/20241113_v0.019_HG002Q100v1.1/evaluations/stvar/callsets/pacbio-sawfish/genotyped.sv.vcf.gz.tbi
+    random_seed: 112
 parameters:
   factors: ["INDEL","FPFN","TR"]  
   num_variants: 5
