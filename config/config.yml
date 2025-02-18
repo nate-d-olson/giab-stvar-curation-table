@@ -19,7 +19,7 @@ callsets:
   comenius-svdss2:
     vcf: s3://giab-data/external_evaluations/20241113_v0.019_HG002Q100v1.1/evaluations/stvar/callsets/comenius-svdss2/svdss2.vcf.gz
     vcfidx: s3://giab-data/external_evaluations/20241113_v0.019_HG002Q100v1.1/evaluations/stvar/callsets/comenius-svdss2/svdss2.vcf.gz.tbi
-    random_seed: 421
+    random_seed: 268
 parameters:
   factors: ["INDEL","FPFN","TR"]  
   num_variants: 5

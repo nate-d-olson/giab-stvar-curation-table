@@ -223,9 +223,6 @@ rule get_coords:
         "envs/r-tidyverse.yml"
     log:
         "logs/{callset}/get_coords_{type}.log",
-    params:
-        num_variants=config["parameters"]["num_variants"],
-        seed=lambda wildcards: config["callsets"][wildcards.callset]["random_seed"],
     script:
         "scripts/get_coords.R"
 
@@ -264,6 +261,10 @@ rule combine_results:
         full="results/evaluation_tables/{callset}/full_variant_tbl.tsv",
         sampled="results/evaluation_tables/{callset}/sampled_variant_tbl.tsv",
         rdata="results/evaluation_tables/{callset}/eval_tbl.RData",
+        sample_n=config["parameters"]["num_variants"],
+        sample_seed=lambda wildcards: config["callsets"][wildcards.callset][
+            "random_seed"
+        ],
     log:
         "logs/{callset}/combine_results.log",
     conda:
