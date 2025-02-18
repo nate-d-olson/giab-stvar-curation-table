@@ -17,10 +17,14 @@ rule get_ref:
         storage.http(config["ref"]["url"]),
     output:
         "resources/GRCh38.fa",
+    conda:
+        "envs/bcftools.yml"
+    log:
+        "logs/get_ref.log",
     shell:
         """
-        cp {input} {output}
-    """
+        cp {input} {output} &> {log}
+        """
 
 
 rule truvari_bench:
@@ -60,7 +64,6 @@ rule truvari_bench:
 
 
 ## Additional arguments for truvari
-
 
 
 ## check truvari bench --refine output, no longer need ga4gh step
@@ -142,7 +145,7 @@ rule get_trfdb:
             | cut -f1-3,${{last_col}} \
             | bgzip 1> {output.trfdb} 2>>{log}
         tabix {output.trfdb} 2>>{log}
-    """
+        """
 
 
 rule extract_ref_chroms:
@@ -243,13 +246,15 @@ rule liftover:
         liftOver {input.bed} {input.chain} {output.lifted} {output.unlifted} &> {log}
         """
 
-## TODO - fix R inputs, not sure about lists
+
 rule combine_results:
     input:
         variant_tsv=expand(
             "results/variant_tsvs/{{callset}}/{type}.tsv", type=["fn", "fp"]
         ),
-        ref_coords=expand("results/{{callset}}/{type}_coords.bed", type=["fn", "fp"]),
+        ref_coords=expand(
+            "results/coords/{{callset}}/{type}_coords.bed", type=["fn", "fp"]
+        ),
         lifted_coords=expand(
             "results/liftover/{{callset}}/{type}_{hap}_lifted.bed",
             type=["fn", "fp"],
