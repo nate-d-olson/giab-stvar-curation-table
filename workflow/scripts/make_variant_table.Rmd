@@ -13,9 +13,6 @@ output:
     smooth_scroll: yes
 ---
 
-__TODO__
-- sanity checks
-- summary / logging
 
 ## Loading libraries and defining inputs
 
