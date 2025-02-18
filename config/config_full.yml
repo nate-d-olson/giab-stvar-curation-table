@@ -17,21 +17,29 @@ base:
   bed: s3://giab-data/defrabb_runs/20250117_v0.020_HG002Q100v1.1/results/draft_benchmarksets/GRCh38_HG002-T2TQ100v1.1-dipz2k_stvar-excluded/GRCh38_HG2-T2TQ100-V1.1_stvar_dipcall-z2k.benchmark.bed
 callsets:
   comenius-svdss2:
-    vcf: s3://giab-data/external_evaluations/20241113_v0.019_HG002Q100v1.1/evaluations/stvar/callsets/comenius-svdss2/svdss2.vcf.gz
-    vcfidx: s3://giab-data/external_evaluations/20241113_v0.019_HG002Q100v1.1/evaluations/stvar/callsets/comenius-svdss2/svdss2.vcf.gz.tbi
+    vcf: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/comenius-svdss2/svdss2.vcf.gz
+    vcfidx: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/comenius-svdss2/svdss2.vcf.gz.tbi
     random_seed: 268
   illumina-dragen:
-    vcf: s3://giab-data/external_evaluations/20241113_v0.019_HG002Q100v1.1/evaluations/stvar/callsets/illumina-dragen/DRAGEN_4.4.x_NIST_HG002.sv.vcf.gz
-    vcfidx: s3://giab-data/external_evaluations/20241113_v0.019_HG002Q100v1.1/evaluations/stvar/callsets/illumina-dragen/DRAGEN_4.4.x_NIST_HG002.sv.vcf.gz.tbi
+    vcf: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/illumina-dragen/DRAGEN_4.4.x_NIST_HG002.sv.vcf.gz
+    vcfidx: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/illumina-dragen/DRAGEN_4.4.x_NIST_HG002.sv.vcf.gz.tbi
     random_seed: 782
   iter-dragen:
-    vcf: s3://giab-data/external_evaluations/20241113_v0.019_HG002Q100v1.1/evaluations/stvar/callsets/iter-dragen/HG002.hg38.sv.vcf.gz
-    vcfidx: s3://giab-data/external_evaluations/20241113_v0.019_HG002Q100v1.1/evaluations/stvar/callsets/iter-dragen/HG002.hg38.sv.vcf.gz.tbi
+    vcf: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/iter-dragen/HG002.hg38.sv.vcf.gz
+    vcfidx: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/iter-dragen/HG002.hg38.sv.vcf.gz.tbi
     random_seed: 483
   pacbio-sawfish:
-    vcf: s3://giab-data/external_evaluations/20241113_v0.019_HG002Q100v1.1/evaluations/stvar/callsets/pacbio-sawfish/genotyped.sv.vcf.gz
-    vcfidx: s3://giab-data/external_evaluations/20241113_v0.019_HG002Q100v1.1/evaluations/stvar/callsets/pacbio-sawfish/genotyped.sv.vcf.gz.tbi
+    vcf: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/pacbio-sawfish/genotyped.sv.vcf.gz
+    vcfidx: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/pacbio-sawfish/genotyped.sv.vcf.gz.tbi
     random_seed: 64
+  baylor-ont:
+    vcf: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/baylor-ont/hg002_ONT_BCM_GRCh38.vcf.gz
+    vcfidx: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/baylor-ont/hg002_ONT_BCM_GRCh38.vcf.gz.tbi
+    random_seed: 316
+  baylor-hifi:
+    vcf: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/baylor-hifi/hg002_HiFi_GRCh38.vcf.gz
+    vcfidx: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/baylor-hifi/hg002_HiFi_GRCh38.vcf.gz.tbi
+    random_seed: 495
 parameters:
   factors: ["INDEL","FPFN","TR"]  
   num_variants: 5
