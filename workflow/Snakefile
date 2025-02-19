@@ -56,6 +56,7 @@ rule truvari_bench:
             --comp {input.comp_vcf} \
             --output results/truvari_bench/{wildcards.callset}/tmp \
             --reference {input.ref} \
+            --includebed {input.regions} \
             &> {log}
         mv results/truvari_bench/{wildcards.callset}/tmp/* \
             results/truvari_bench/{wildcards.callset}/
