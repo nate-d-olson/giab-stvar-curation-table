@@ -1,15 +1,16 @@
 # Data Dictionary
 
-| Column Name | Data Type | Description                                                                                                                |
-| ----------- | --------- | -------------------------------------------------------------------------------------------------------------------------- |
-| label       | String    | Label indicating the variant's status, such as false positive (fp) or false negative (fn).                                 |
-| TR_anno     | String    | Variant is in a tandem repeat (TR) or not (nonTR), based on `truvari anno trf` annotations.                                |
-| sv_type     | String    | Variant type, typically "INS" (Insertion) or "DEL" (Deletion). Defined using `truvari anno svinfo`, with DUPs as insertions. |
-| CHROM       | String    | Chromosome identifier in the format 'chrN' (e.g., chr1, chrX).                                                             |
-| POS0        | Integer   | Start position of the variant on the chromosome (0-based).                                                                 |
-| END         | Integer   | End position of the variant on the chromosome (1-based).                                                                   |
-| SVLEN       | String    | Size of SV in bp.                                                                                                          |
-| INFO        | String    | INFO field from VCF.                                                                                                       |
+| Column Name | Data Type | Description                                                                                                        |
+| ----------- | --------- | ------------------------------------------------------------------------------------------------------------------ |
+| unique_to   | String    | Whether the discrepancy is unique to the comparison callset (Truvari FP) or draft benchmark (Truvari FN)           |
+| TR_anno     | String    | Variant is in a tandem repeat (TR) or not (nonTR), based on `truvari anno trf` annotations.                        |
+| sv_cat      | String    | Variant type, "INS" (Insertion) or "DEL" (Deletion). Defined using `truvari anno svinfo`, with DUPs as insertions. |
+| CHROM       | String    | Chromosome identifier in the format 'chrN' (e.g., chr1, chrX).                                                     |
+| POS         | Integer   | Variant position from VCF.                                                                                         |
+| END         | Integer   | End position of the variant on the chromosome (1-based).                                                           |
+| SVLEN       | String    | Size of SV in bp.                                                                                                  |
+| SVTYPE      | String    | Variant type, defined using `truvari anno svinfo`.                                                                 |
+| INFO        | String    | INFO field from VCF.                                                                                               |
 
 ## Strata
 

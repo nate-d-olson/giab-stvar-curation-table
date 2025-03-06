@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Session genome="hg38" locus="chr1:187495131-187498767" nextAutoscaleGroup="7" version="8">
+    <Resources>
+        <Resource index="https://giab-data.s3.amazonaws.com/XY_evaluation/11_16_22_R1041_HG002_UL_Kit14_260_Guppy_6.3.8_sup.pass.lt100kb_sorted_haplotagged.bam.bai" path="https://giab-data.s3.amazonaws.com/XY_evaluation/11_16_22_R1041_HG002_UL_Kit14_260_Guppy_6.3.8_sup.pass.lt100kb_sorted_haplotagged.bam" type="bam"/>
+        <Resource path="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/release/references/GRCh38/resources/hg38.oddRegions.bed.gz" type="bed"/>
+        <Resource index="https://giab-data.s3.amazonaws.com/defrabb_runs/20250117_v0.020_HG002Q100v1.1/results/asm_varcalls/GRCh38_HG002-T2TQ100v1.1-dipz2k/GRCh38_HG2-T2TQ100-V1.1_dipcall-z2k.hap2.bam.bai" path="https://giab-data.s3.amazonaws.com/defrabb_runs/20250117_v0.020_HG002Q100v1.1/results/asm_varcalls/GRCh38_HG002-T2TQ100v1.1-dipz2k/GRCh38_HG2-T2TQ100-V1.1_dipcall-z2k.hap2.bam" type="bam"/>
+        <Resource index="https://downloads.pacbcloud.com/public/onso/2024Q1/WGS/NIST_HG_Trio/hg002/bams/HG002_Onso_trimmed.bam.bai" path="https://downloads.pacbcloud.com/public/onso/2024Q1/WGS/NIST_HG_Trio/hg002/bams/HG002_Onso_trimmed.bam" type="bam"/>
+        <Resource index="https://giab-data.s3.amazonaws.com/defrabb_runs/20250117_v0.020_HG002Q100v1.1/results/asm_varcalls/GRCh38_HG002-T2TQ100v1.1-dipz2k/GRCh38_HG2-T2TQ100-V1.1_dipcall-z2k.hap1.bam.bai" path="https://giab-data.s3.amazonaws.com/defrabb_runs/20250117_v0.020_HG002Q100v1.1/results/asm_varcalls/GRCh38_HG002-T2TQ100v1.1-dipz2k/GRCh38_HG2-T2TQ100-V1.1_dipcall-z2k.hap1.bam" type="bam"/>
+        <Resource index="https://giab-data.s3.amazonaws.com/defrabb_runs/20250117_v0.020_HG002Q100v1.1/results/draft_benchmarksets/GRCh38_HG002-T2TQ100v1.1-dipz2k_stvar-excluded/GRCh38_HG2-T2TQ100-V1.1_stvar_dipcall-z2k.vcf.gz.tbi" path="https://giab-data.s3.amazonaws.com/defrabb_runs/20250117_v0.020_HG002Q100v1.1/results/draft_benchmarksets/GRCh38_HG002-T2TQ100v1.1-dipz2k_stvar-excluded/GRCh38_HG2-T2TQ100-V1.1_stvar_dipcall-z2k.vcf.gz" type="vcf"/>
+        <Resource index="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/data/AshkenazimTrio/HG002_NA24385_son/Element_AVITI_20240920/HG002_Element-LngInsert_34x_GRCh38-GIABv3.bam.bai" path="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/data/AshkenazimTrio/HG002_NA24385_son/Element_AVITI_20240920/HG002_Element-LngInsert_34x_GRCh38-GIABv3.bam" type="bam"/>
+        <Resource path="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/release/references/GRCh38/resources/hg38.segdups.bed.gz" type="bed"/>
+        <Resource path="https://giab-data.s3.amazonaws.com/defrabb_runs/20250117_v0.020_HG002Q100v1.1/results/draft_benchmarksets/GRCh38_HG002-T2TQ100v1.1-dipz2k_stvar-excluded/GRCh38_HG2-T2TQ100-V1.1_stvar_dipcall-z2k.benchmark.bed" type="bed"/>
+        <Resource path="https://giab-data.s3.amazonaws.com/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/misc/giab_v1.1_curation/grch38_shadow_svs.bed" type="bed"/>
+        <Resource index="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/release/references/GRCh38/resources/hg38_self_chain.bam.bai" path="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/release/references/GRCh38/resources/hg38_self_chain.bam" type="bam"/>
+        <Resource index="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/data/AshkenazimTrio/HG002_NA24385_son/PacBio_HiFi-Revio_20231031/HG002_PacBio-HiFi-Revio_20231031_48x_GRCh38-GIABv3.bam.bai" path="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/data/AshkenazimTrio/HG002_NA24385_son/PacBio_HiFi-Revio_20231031/HG002_PacBio-HiFi-Revio_20231031_48x_GRCh38-GIABv3.bam" type="bam"/>
+        <Resource index="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/data/AshkenazimTrio/HG002_NA24385_son/NIST_HiSeq_HG002_Homogeneity-10953946/NHGRI_Illumina300X_AJtrio_novoalign_bams/HG002.GRCh38.60x.1.bam.bai" path="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/data/AshkenazimTrio/HG002_NA24385_son/NIST_HiSeq_HG002_Homogeneity-10953946/NHGRI_Illumina300X_AJtrio_novoalign_bams/HG002.GRCh38.60x.1.bam" type="bam"/>
+        <Resource path="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/release/references/GRCh38/resources/hg38.repeats.bed.gz" type="bed"/>
+        <Resource index="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/data/AshkenazimTrio/HG002_NA24385_son/Element_AVITI_20240920/HG002_Element-StdInsert_80x_GRCh38-GIABv3.bam.bai" path="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/data/AshkenazimTrio/HG002_NA24385_son/Element_AVITI_20240920/HG002_Element-StdInsert_80x_GRCh38-GIABv3.bam" type="bam"/>
+        <Resource index="s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/baylor-hifi/hg002_HiFi_GRCh38.vcf.gz.tbi" path="s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/baylor-hifi/hg002_HiFi_GRCh38.vcf.gz" type="vcf"/>
+    </Resources>
+    <Panel height="170" name="DataPanel" width="1513">
+        <Track attributeKey="GRCh38_HG002-T2TQ100-V1.1_stvar.benchmark.bed" clazz="org.broad.igv.track.FeatureTrack" colorScale="ContinuousColorScale;0.0;23.0;255,255,255;0,0,178" fontSize="10" groupByStrand="false" id="https://giab-data.s3.amazonaws.com/defrabb_runs/20250117_v0.020_HG002Q100v1.1/results/draft_benchmarksets/GRCh38_HG002-T2TQ100v1.1-dipz2k_stvar-excluded/GRCh38_HG2-T2TQ100-V1.1_stvar_dipcall-z2k.benchmark.bed" name="Draft Benchmark Regions 20250117" visible="true"/>
+        <Track attributeKey="GRCh38_HG002-T2TQ100-V1.1_stvar.vcf.gz" clazz="org.broad.igv.variant.VariantTrack" displayMode="EXPANDED" featureVisibilityWindow="100000" fontSize="10" groupByStrand="false" id="https://giab-data.s3.amazonaws.com/defrabb_runs/20250117_v0.020_HG002Q100v1.1/results/draft_benchmarksets/GRCh38_HG002-T2TQ100v1.1-dipz2k_stvar-excluded/GRCh38_HG2-T2TQ100-V1.1_stvar_dipcall-z2k.vcf.gz" name="Draft Benchmark Vars 20250117" siteColorMode="ALLELE_FREQUENCY" visible="true"/>
+        <Track attributeKey="hg002_HiFi_GRCh38.vcf.gz" clazz="org.broad.igv.variant.VariantTrack" displayMode="EXPANDED" featureVisibilityWindow="100000" fontSize="10" groupByStrand="false" id="s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/baylor-hifi/hg002_HiFi_GRCh38.vcf.gz" name="hg002_HiFi_GRCh38.vcf.gz" siteColorMode="ALLELE_FREQUENCY" visible="true"/>
+    </Panel>
+    <Panel height="61" name="Panel1702006408849" width="1513">
+        <Track attributeKey="GRCh38_HG2-T2TQ100-V1.1_dipcall-z2k.hap1.bam" clazz="org.broad.igv.sam.AlignmentTrack" color="185,185,185" displayMode="EXPANDED" experimentType="THIRD_GEN" fontSize="10" id="https://giab-data.s3.amazonaws.com/defrabb_runs/20250117_v0.020_HG002Q100v1.1/results/asm_varcalls/GRCh38_HG002-T2TQ100v1.1-dipz2k/GRCh38_HG2-T2TQ100-V1.1_dipcall-z2k.hap1.bam" name="HG002-T2TQ100-V1.1 Paternal" visible="true">
+            <RenderOptions/>
+        </Track>
+    </Panel>
+    <Panel height="61" name="Panel1702006445060" width="1513">
+        <Track attributeKey="HG2-T2TQ100-V1.1 Maternal" clazz="org.broad.igv.sam.AlignmentTrack" color="185,185,185" displayMode="EXPANDED" experimentType="THIRD_GEN" fontSize="10" id="https://giab-data.s3.amazonaws.com/defrabb_runs/20250117_v0.020_HG002Q100v1.1/results/asm_varcalls/GRCh38_HG002-T2TQ100v1.1-dipz2k/GRCh38_HG2-T2TQ100-V1.1_dipcall-z2k.hap2.bam" name="HG002-T2TQ100-V1.1 Maternal" visible="true">
+            <RenderOptions/>
+        </Track>
+    </Panel>
+    <Panel height="1015" name="Panel1675706200894" width="1513">
+        <Track attributeKey="HG002_PacBio-HiFi-Revio_20231031_48x_GRCh38-GIABv3.bam Coverage" autoScale="true" clazz="org.broad.igv.sam.CoverageTrack" fontSize="10" id="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/data/AshkenazimTrio/HG002_NA24385_son/PacBio_HiFi-Revio_20231031/HG002_PacBio-HiFi-Revio_20231031_48x_GRCh38-GIABv3.bam_coverage" name="HG002 PacBio HiFi 48X Coverage" snpThreshold="0.15" visible="true">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="58.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="HG002_PacBio-HiFi-Revio_20231031_48x_GRCh38-GIABv3.bam" clazz="org.broad.igv.sam.AlignmentTrack" color="185,185,185" displayMode="EXPANDED" experimentType="THIRD_GEN" fontSize="10" id="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/data/AshkenazimTrio/HG002_NA24385_son/PacBio_HiFi-Revio_20231031/HG002_PacBio-HiFi-Revio_20231031_48x_GRCh38-GIABv3.bam" name="HG002 PacBio HiFi 48X" visible="true">
+            <RenderOptions colorOption="NONE" groupByOption="TAG" groupByTag="HP"/>
+        </Track>
+    </Panel>
+    <Panel height="735" name="Panel1675706317908" width="1513">
+        <Track attributeKey="11_16_22_R1041_HG002_UL_Kit14_260_Guppy_6.3.8_sup.pass.lt100kb_sorted_haplotagged.bam Coverage" autoScale="true" clazz="org.broad.igv.sam.CoverageTrack" fontSize="10" id="https://giab-data.s3.amazonaws.com/XY_evaluation/11_16_22_R1041_HG002_UL_Kit14_260_Guppy_6.3.8_sup.pass.lt100kb_sorted_haplotagged.bam_coverage" name="HG002 ONT 100kb+ 37X Coverage" snpThreshold="0.15" visible="true">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="45.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="11_16_22_R1041_HG002_UL_Kit14_260_Guppy_6.3.8_sup.pass.lt100kb_sorted_haplotagged.bam" clazz="org.broad.igv.sam.AlignmentTrack" color="185,185,185" displayMode="EXPANDED" experimentType="THIRD_GEN" fontSize="10" id="https://giab-data.s3.amazonaws.com/XY_evaluation/11_16_22_R1041_HG002_UL_Kit14_260_Guppy_6.3.8_sup.pass.lt100kb_sorted_haplotagged.bam" name="HG002 ONT 100kb+ 37X" visible="true">
+            <RenderOptions colorOption="NONE" groupByOption="TAG" groupByTag="HP"/>
+        </Track>
+    </Panel>
+    <Panel height="1374" name="Panel1675706181618" width="1513">
+        <Track attributeKey="HG002.GRCh38.60x.1.bam Coverage" autoScale="true" clazz="org.broad.igv.sam.CoverageTrack" fontSize="10" id="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/data/AshkenazimTrio/HG002_NA24385_son/NIST_HiSeq_HG002_Homogeneity-10953946/NHGRI_Illumina300X_AJtrio_novoalign_bams/HG002.GRCh38.60x.1.bam_coverage" name="HG002 Illumina 60x Diploid Coverage" snpThreshold="0.15" visible="true">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="86.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="HG002.GRCh38.60x.1.bam" clazz="org.broad.igv.sam.AlignmentTrack" color="185,185,185" displayMode="EXPANDED" experimentType="OTHER" fontSize="10" id="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/data/AshkenazimTrio/HG002_NA24385_son/NIST_HiSeq_HG002_Homogeneity-10953946/NHGRI_Illumina300X_AJtrio_novoalign_bams/HG002.GRCh38.60x.1.bam" name="HG002 Illumina 60x Alignments" visible="true">
+            <RenderOptions/>
+        </Track>
+    </Panel>
+    <Panel height="898" name="Panel1675706367786" width="1513">
+        <Track attributeKey="HG002_Element-LngInsert_34x_GRCh38-GIABv3.bam Coverage" autoScale="true" clazz="org.broad.igv.sam.CoverageTrack" fontSize="10" id="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/data/AshkenazimTrio/HG002_NA24385_son/Element_AVITI_20240920/HG002_Element-LngInsert_34x_GRCh38-GIABv3.bam_coverage" name="HG002 Element Long Insert 34X Coverage" snpThreshold="0.15" visible="true">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="57.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="HG002_Element-LngInsert_34x_GRCh38-GIABv3.bam" clazz="org.broad.igv.sam.AlignmentTrack" color="185,185,185" displayMode="EXPANDED" experimentType="OTHER" fontSize="10" id="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/data/AshkenazimTrio/HG002_NA24385_son/Element_AVITI_20240920/HG002_Element-LngInsert_34x_GRCh38-GIABv3.bam" name="HG002 Element Long Insert 34X" visible="true">
+            <RenderOptions/>
+        </Track>
+    </Panel>
+    <Panel height="1752" name="Panel1675706367787" width="1513">
+        <Track attributeKey="HG002_Element-StdInsert_80x_GRCh38-GIABv3.bam Coverage" autoScale="true" clazz="org.broad.igv.sam.CoverageTrack" fontSize="10" id="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/data/AshkenazimTrio/HG002_NA24385_son/Element_AVITI_20240920/HG002_Element-StdInsert_80x_GRCh38-GIABv3.bam_coverage" name="HG002 Element Short Insert 80X Coverage" snpThreshold="0.15" visible="true">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="110.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="HG002_Element-StdInsert_80x_GRCh38-GIABv3.bam" clazz="org.broad.igv.sam.AlignmentTrack" color="185,185,185" displayMode="EXPANDED" experimentType="OTHER" fontSize="10" id="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/data/AshkenazimTrio/HG002_NA24385_son/Element_AVITI_20240920/HG002_Element-StdInsert_80x_GRCh38-GIABv3.bam" name="HG002 Element Short Insert 80X" visible="true">
+            <RenderOptions/>
+        </Track>
+    </Panel>
+    <Panel height="1304" name="Panel1705012289650" width="1513">
+        <Track attributeKey="HG002_Onso_trimmed.bam Coverage" autoScale="true" clazz="org.broad.igv.sam.CoverageTrack" fontSize="10" id="https://downloads.pacbcloud.com/public/onso/2024Q1/WGS/NIST_HG_Trio/hg002/bams/HG002_Onso_trimmed.bam_coverage" name="Onso PCR-free 50X Coverage" snpThreshold="0.2" visible="true">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="78.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="HG002_Onso_trimmed.bam" clazz="org.broad.igv.sam.AlignmentTrack" color="185,185,185" displayMode="EXPANDED" experimentType="OTHER" fontSize="10" id="https://downloads.pacbcloud.com/public/onso/2024Q1/WGS/NIST_HG_Trio/hg002/bams/HG002_Onso_trimmed.bam" name="Onso PCR-free 50X" visible="true">
+            <RenderOptions/>
+        </Track>
+    </Panel>
+    <Panel height="101" name="Panel1736951734130" width="1513">
+        <Track attributeKey="hg38_self_chain.bam Coverage" autoScale="true" clazz="org.broad.igv.sam.CoverageTrack" fontSize="10" id="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/release/references/GRCh38/resources/hg38_self_chain.bam_coverage" name="SelfChain Coverage" snpThreshold="0.1" visible="true">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="10.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="hg38_self_chain.bam" clazz="org.broad.igv.sam.AlignmentTrack" color="185,185,185" displayMode="EXPANDED" experimentType="THIRD_GEN" fontSize="10" id="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/release/references/GRCh38/resources/hg38_self_chain.bam" name="SelfChain" visible="true">
+            <RenderOptions/>
+        </Track>
+    </Panel>
+    <Panel height="160" name="FeaturePanel" width="1513">
+        <Track attributeKey="Reference sequence" clazz="org.broad.igv.track.SequenceTrack" fontSize="10" id="Reference sequence" name="Reference sequence" sequenceTranslationStrandValue="POSITIVE" shouldShowTranslation="false" visible="true"/>
+        <Track attributeKey="hg38.repeats.bed.gz" clazz="org.broad.igv.track.FeatureTrack" featureVisibilityWindow="2253167" fontSize="10" groupByStrand="false" id="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/release/references/GRCh38/resources/hg38.repeats.bed.gz" name="Repeats" visible="true"/>
+        <Track attributeKey="hg38.segdups.bed.gz" clazz="org.broad.igv.track.FeatureTrack" featureVisibilityWindow="81754982" fontSize="10" groupByStrand="false" id="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/release/references/GRCh38/resources/hg38.segdups.bed.gz" name="SegDups" visible="true"/>
+        <Track attributeKey="hg38.oddRegions.bed.gz" clazz="org.broad.igv.track.FeatureTrack" featureVisibilityWindow="2147483647" fontSize="10" groupByStrand="false" id="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/release/references/GRCh38/resources/hg38.oddRegions.bed.gz" name="OddRegions" visible="true"/>
+        <Track attributeKey="grch38_shaddow_svs.bed" clazz="org.broad.igv.track.FeatureTrack" fontSize="10" groupByStrand="false" id="https://giab-data.s3.amazonaws.com/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/misc/giab_v1.1_curation/grch38_shadow_svs.bed" name="Shadow SVs" visible="true"/>
+    </Panel>
+    <PanelLayout dividerFractions="0.09206081081081081,0.12753378378378377,0.16131756756756757,0.23310810810810811,0.3623310810810811,0.49155405405405406,0.620777027027027,0.75,0.879222972972973,0.9222972972972973"/>
+    <HiddenAttributes>
+        <Attribute name="DATA FILE"/>
+        <Attribute name="DATA TYPE"/>
+        <Attribute name="NAME"/>
+    </HiddenAttributes>
+</Session>
