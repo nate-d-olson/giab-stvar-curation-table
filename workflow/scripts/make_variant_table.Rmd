@@ -89,14 +89,22 @@ sampled_tbl <- combined_tbl |>
 
 ```{r}
 sampled_tbl |>
+  ungroup() |> 
+  ## Only outputting INS and DEL
+  filter(sv_type %in% c("DEL", "INS")) |> 
+    rename(sv_cat = sv_type) |> 
+    mutate(POS = POS0 + 1,
+    unique_to = case_when(label == "fp" ~ "comparison",
+    label == "fn" ~ "benchmark")) |> 
   select(
-    label,
+    unique_to,
     TR_anno,
-    sv_type,
+    sv_cat,
     CHROM,
-    POS0,
+    POS,
     END,
     SVLEN,
+    SVTYPE,
     INFO,
     GRCh38_chr,
     GRCh38_start,
