@@ -7,7 +7,7 @@ import os
 rule all:
     input:
         expand(
-            "results/evaluation_tables/{callset}/report.html",
+            "results/{callset}/evaluation_tables/{callset}_report.html",
             callset=config["callsets"].keys(),
         ),
 
@@ -40,28 +40,28 @@ rule truvari_bench:
         regions=storage.s3(config["base"]["bed"]),
         ref="resources/GRCh38.fa",
     output:
-        base_vcf="results/truvari_bench/{callset}/refine.base.vcf.gz",
-        comp_vcf="results/truvari_bench/{callset}/refine.comp.vcf.gz",
+        base_vcf="results/{callset}/truvari_bench/refine.base.vcf.gz",
+        comp_vcf="results/{callset}/truvari_bench/refine.comp.vcf.gz",
     threads: 4
     conda:
         "envs/truvari.yml"
     log:
-        "logs/truvari_bench/{callset}.log",
+        "logs/{callset}/truvari_bench.log",
     shell:
         """
-        rm -rf results/truvari_bench/{wildcards.callset}/tmp/
+        rm -rf results/{wildcards.callset}/truvari_bench//tmp/
         truvari bench \
             --refine --dup-to-ins --pick ac --passonly \
             --sizemax 40000 \
             --base {input.base_vcf} \
             --comp {input.comp_vcf} \
-            --output results/truvari_bench/{wildcards.callset}/tmp \
+            --output results/{wildcards.callset}/truvari_bench/tmp \
             --reference {input.ref} \
             --includebed {input.regions} \
             &> {log}
-        mv results/truvari_bench/{wildcards.callset}/tmp/* \
-            results/truvari_bench/{wildcards.callset}/
-        rm -r results/truvari_bench/{wildcards.callset}/tmp
+        mv results/{wildcards.callset}/truvari_bench/tmp/* \
+            results/{wildcards.callset}/truvari_bench/
+        rm -r results/{wildcards.callset}/truvari_bench/tmp
         """
 
 
@@ -71,15 +71,15 @@ rule truvari_bench:
 ## check truvari bench --refine output, no longer need ga4gh step
 rule get_discrepancies:
     input:
-        base_vcf="results/truvari_bench/{callset}/refine.base.vcf.gz",
-        comp_vcf="results/truvari_bench/{callset}/refine.comp.vcf.gz",
+        base_vcf="results/{callset}/truvari_bench/refine.base.vcf.gz",
+        comp_vcf="results/{callset}/truvari_bench/refine.comp.vcf.gz",
     output:
-        fn_vcf="results/discrepancies/{callset}/fn.vcf.gz",
-        fp_vcf="results/discrepancies/{callset}/fp.vcf.gz",
+        fn_vcf="results/{callset}/discrepancies/fn.vcf.gz",
+        fp_vcf="results/{callset}/discrepancies/fp.vcf.gz",
     conda:
         "envs/bcftools.yml"
     log:
-        "logs/discrepancies/{callset}.log",
+        "logs/{callset}/discrepancies.log",
     shell:
         """
         echo "Extracting FNs" > {log}
@@ -100,9 +100,9 @@ rule get_discrepancies:
 
 rule truvari_anno_svinfo:
     input:
-        "results/discrepancies/{callset}/{type}.vcf.gz",
+        "results/{callset}/discrepancies/{type}.vcf.gz",
     output:
-        "results/truvari_anno/{callset}/{type}_svinfo.vcf",
+        "results/{callset}/truvari_anno/{type}_svinfo.vcf",
     conda:
         "envs/truvari.yml"
     log:
@@ -116,12 +116,12 @@ rule truvari_anno_svinfo:
 
 rule compress_index_vcf:
     input:
-        "results/truvari_anno/{prefix}.vcf",
+        "results/{callset}/truvari_anno/{prefix}.vcf",
     output:
-        "results/truvari_anno/{prefix}.vcf.gz",
-        "results/truvari_anno/{prefix}.vcf.gz.csi",
+        "results/{callset}/truvari_anno/{prefix}.vcf.gz",
+        "results/{callset}/truvari_anno/{prefix}.vcf.gz.csi",
     log:
-        "logs/compress_index_vcf/{prefix}.log",
+        "logs/{callset}/compress_index_vcf/{prefix}.log",
     params:
         extra="-W",
     wrapper:
@@ -177,13 +177,13 @@ rule index_fasta:
 
 rule truvari_anno_trf:
     input:
-        vcf="results/truvari_anno/{callset}/{type}_svinfo.vcf.gz",
+        vcf="results/{callset}/truvari_anno/{type}_svinfo.vcf.gz",
         ref="resources/GRCh38_main.fa",
         refidx="resources/GRCh38_main.fa.fai",
         trfdb="resources/references/GRCh38_adotto_trf.bed.gz",
         trfdbtbi="resources/references/GRCh38_adotto_trf.bed.gz.tbi",
     output:
-        "results/truvari_anno/{callset}/{type}_svinfo-trf.vcf",
+        "results/{callset}/truvari_anno/{type}_svinfo-trf.vcf",
     conda:
         "envs/truvari.yml"
     log:
@@ -204,13 +204,13 @@ rule truvari_anno_trf:
 
 rule make_variant_tsvs:
     input:
-        vcf="results/truvari_anno/{callset}/{type}_svinfo-trf.vcf",
+        vcf="results/{callset}/truvari_anno/{type}_svinfo-trf.vcf",
     output:
-        tsv="results/variant_tsvs/{callset}/{type}.tsv",
+        tsv="results/{callset}/variant_tsvs/{type}.tsv",
     conda:
         "envs/bcftools.yml"
     log:
-        "logs/variant_tsvs/{callset}_{type}.log",
+        "logs/{callset}/variant_tsvs_{type}.log",
     shell:
         """
         bcftools query -HH \
@@ -221,9 +221,9 @@ rule make_variant_tsvs:
 
 rule get_coords:
     input:
-        "results/variant_tsvs/{callset}/{type}.tsv",
+        "results/{callset}/variant_tsvs/{type}.tsv",
     output:
-        "results/coords/{callset}/{type}_coords.bed",
+        "results/{callset}/coords/{type}_coords.bed",
     conda:
         "envs/r-tidyverse.yml"
     log:
@@ -234,16 +234,16 @@ rule get_coords:
 
 rule liftover:
     input:
-        bed="results/coords/{callset}/{type}_coords.bed",
+        bed="results/{callset}/coords/{type}_coords.bed",
         chain=lambda wildcards: storage.http(config["chain"][wildcards.hap]["url"]),
     output:
-        lifted="results/liftover/{callset}/{type}_{hap}_lifted.bed",
-        unlifted="results/liftover/{callset}/{type}_{hap}_unlifted.txt",
+        lifted="results/{callset}/liftover/{type}_{hap}_lifted.bed",
+        unlifted="results/{callset}/liftover/{type}_{hap}_unlifted.txt",
     conda:
         "envs/liftover.yml"
     params: config["parameters"]["liftover"]
     log:
-        "logs/liftover/{callset}/{type}_{hap}.log",
+        "logs/{callset}/liftover/{type}_{hap}.log",
     shell:
         """
         liftOver {params} {input.bed} {input.chain} {output.lifted} {output.unlifted} &> {log}
@@ -253,22 +253,22 @@ rule liftover:
 rule combine_results:
     input:
         variant_tsv=expand(
-            "results/variant_tsvs/{{callset}}/{type}.tsv", type=["fn", "fp"]
+            "results/{{callset}}/variant_tsvs/{type}.tsv", type=["fn", "fp"]
         ),
         ref_coords=expand(
-            "results/coords/{{callset}}/{type}_coords.bed", type=["fn", "fp"]
+            "results/{{callset}}/coords/{type}_coords.bed", type=["fn", "fp"]
         ),
         lifted_coords=expand(
-            "results/liftover/{{callset}}/{type}_{hap}_lifted.bed",
+            "results/{{callset}}/liftover/{type}_{hap}_lifted.bed",
             type=["fn", "fp"],
             hap=["mat", "pat"],
         ),
     output:
-        "results/evaluation_tables/{callset}/report.html",
+        "results/{callset}/evaluation_tables/{callset}_report.html",
     params:
-        full="results/evaluation_tables/{callset}/full_variant_tbl.tsv",
-        sampled="results/evaluation_tables/{callset}/sampled_variant_tbl.tsv",
-        rdata="results/evaluation_tables/{callset}/eval_tbl.RData",
+        full="results/{callset}/evaluation_tables/{callset}_full_variant_tbl.tsv",
+        sampled="results/{callset}/evaluation_tables/{callset}_sampled_variant_tbl.tsv",
+        rdata="results/{callset}/evaluation_tables/{callset}_eval_tbl.RData",
         sample_n=config["parameters"]["num_variants"],
         sample_seed=lambda wildcards: config["callsets"][wildcards.callset][
             "random_seed"
