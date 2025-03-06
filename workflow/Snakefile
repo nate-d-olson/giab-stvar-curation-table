@@ -23,7 +23,7 @@ rule get_ref:
         "logs/get_ref.log",
     shell:
         """
-        cp {input} {output} &> {log}
+        gunzip -c {input} 1> {output} 2> {log}
         """
 
 
