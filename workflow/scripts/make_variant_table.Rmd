@@ -26,7 +26,7 @@ fn_mat_path <- snakemake@input$lifted_coords[1]
 fn_pat_path <- snakemake@input$lifted_coords[2]
 fp_mat_path <- snakemake@input$lifted_coords[3]
 fp_pat_path <- snakemake@input$lifted_coords[4]
-sample_seed <- snakemake@params$seed
+sample_seed <- as.numeric(snakemake@params$seed)
 sample_n <- snakemake@params$sample_n
 out_full_path <- snakemake@params$full
 out_sampled_path <- snakemake@params$sampled
