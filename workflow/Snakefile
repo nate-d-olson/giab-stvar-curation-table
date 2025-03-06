@@ -241,11 +241,12 @@ rule liftover:
         unlifted="results/liftover/{callset}/{type}_{hap}_unlifted.txt",
     conda:
         "envs/liftover.yml"
+    params: config["parameters"]["liftover"]
     log:
         "logs/liftover/{callset}/{type}_{hap}.log",
     shell:
         """
-        liftOver {input.bed} {input.chain} {output.lifted} {output.unlifted} &> {log}
+        liftOver {params} {input.bed} {input.chain} {output.lifted} {output.unlifted} &> {log}
         """
 
 
