@@ -40,6 +40,27 @@ callsets:
     vcf: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/baylor-hifi/hg002_HiFi_GRCh38.vcf.gz
     vcfidx: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/baylor-hifi/hg002_HiFi_GRCh38.vcf.gz.tbi
     random_seed: 495
+  ont-verkko:
+    vcf: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/ont-verkko/twoFCverkko.dipcall.dip.svs.splitmulti.vcf.gz
+    vcfidx: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/ont-verkko/twoFCverkko.dipcall.dip.svs.splitmulti.vcf.gz.tbi
+    random_seed: 571
+  ont-sniffles:
+    vcf: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/ont-sniffles/v5hac40x_snifflesPhased_v2.5.3tr.pass.vcf.gz
+    vcfidx: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/ont-sniffles/v5hac40x_snifflesPhased_v2.5.3tr.pass.vcf.gz.tbi
+    random_seed: 341
+  ucla-ensamble:
+    vcf: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/ucla-ensamble/HG002_call-gSV-5.2.0_consensus-callset.vcf.gz
+    vcfidx: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/ucla-ensamble/HG002_call-gSV-5.2.0_consensus-callset.vcf.gz.csi
+    random_seed: 618
+  ucla-delly:
+    vcf: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/ucla-ensamble/HG002_call-gSV-5.2.0_DELLY-1.2.6-only-PASS.vcf.gz
+    vcfidx: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/ucla-ensamble/HG002_call-gSV-5.2.0_DELLY-1.2.6-only-PASS.vcf.gz.csi
+    random_seed: 242
+  ucla-manta:
+    vcf: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/ucla-ensamble/HG002_call-gSV-5.2.0_Manta-1.6.0-only-PASS.vcf.gz
+    vcfidx: s3://giab-data/external_evaluations/20250117_v0.020_HG002Q100v1.1/evaluations/stvar/callsets/ucla-ensamble/HG002_call-gSV-5.2.0_Manta-1.6.0-only-PASS.vcf.gz.csi
+    random_seed: 930
 parameters:
   factors: ["INDEL","FPFN","TR"]  
   num_variants: 5
+  liftover: "-minMatch=0.05"
