@@ -52,6 +52,7 @@ rule truvari_bench:
         rm -rf results/truvari_bench/{wildcards.callset}/tmp/
         truvari bench \
             --refine --dup-to-ins --pick ac --passonly \
+            --sizemax 40000 \
             --base {input.base_vcf} \
             --comp {input.comp_vcf} \
             --output results/truvari_bench/{wildcards.callset}/tmp \
